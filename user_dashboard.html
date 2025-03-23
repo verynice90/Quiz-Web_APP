@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard</title>
+    <style>
+        /* Existing CSS styles from user_dashboard.html */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .header {
+            width: 100%;
+            background-color: #4CAF50;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        .header h2 {
+            margin: 0;
+            font-size: 2em;
+        }
+
+        .header p {
+            margin: 5px 0;
+            font-size: 1.1em;
+        }
+
+        .logout-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: #dc3545;
+            padding: 10px 20px;
+            border-radius: 4px;
+            color: #fff;
+            text-decoration: none;
+            font-size: 1em;
+        }
+
+        .logout-button:hover {
+            background-color: #c82333;
+        }
+
+        .main-content {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            max-width: 800px;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .take-quiz-button {
+            display: inline-block;
+            margin: 20px 0;
+            padding: 15px 30px;
+            background-color: #007bff;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 1.2em;
+        }
+
+        .take-quiz-button:hover {
+            background-color: #0056b3;
+        }
+
+        .instruction-section {
+            margin-top: 20px;
+            text-align: left;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .instruction-section h3 {
+            color: #4CAF50;
+            margin-bottom: 15px;
+        }
+
+        .instruction-section ol {
+            padding-left: 20px;
+        }
+
+        .instruction-section ol li {
+            margin-bottom: 10px;
+            color: #555;
+        }
+
+        .certificate-info {
+            margin-top: 20px;
+            background-color: #dff0d8;
+            padding: 15px;
+            border: 1px solid #d6e9c6;
+            border-radius: 5px;
+            text-align: left;
+        }
+
+        .certificate-info p {
+            margin: 5px 0;
+            color: #555;
+        }
+
+        #dateTime {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: rgba(255, 255, 255, 0.7);
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-family: sans-serif;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            width: 90%;
+            max-width: 400px;
+        }
+
+        .modal h3 {
+            margin-top: 0;
+            color: #333;
+            font-size: 1.5em;
+            text-align: center;
+        }
+
+        .modal label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .modal input, .modal select {
+            width: 95%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1em;
+        }
+
+        .modal button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1em;
+            margin-right: 10px;
+        }
+
+        .modal button[type="submit"] {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .modal button[type="submit"]:hover {
+            background-color: #218838;
+        }
+
+        .modal button[type="button"] {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .modal button[type="button"]:hover {
+            background-color: #c82333;
+        }
+
+        /* Overlay for Modal */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        /* Hamburger Menu Styles */
+        .hamburger-menu {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            cursor: pointer;
+            z-index: 1001;
+        }
+
+        .hamburger-menu .bar {
+            width: 25px;
+            height: 3px;
+            background-color: white;
+            margin: 5px 5px;
+            transition: 0.4s;
+        }
+
+        .menu {
+            position: fixed;
+            top: 0;
+            left: -250px;
+            width: 250px;
+            height: 100%;
+            background-color: #4CAF50;
+            transition: 0.4s;
+            z-index: 1000;
+            padding-top: 60px;
+        }
+
+        .menu.active {
+            left: 0;
+        }
+
+        .menu a {
+            padding: 15px 20px;
+            text-decoration: none;
+            font-size: 1.1em;
+            color: white;
+            display: block;
+            transition: 0.3s;
+        }
+
+        .menu a:hover {
+            background-color: #45a049;
+        }
+
+        .menu .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 1.5em;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Section -->
+    <div class="header">
+        <!-- Hamburger Menu Icon -->
+        <div class="hamburger-menu" onclick="toggleMenu()">
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+        </div>
+
+        <!-- Logout Button -->
+        <a href="/logout" class="logout-button">Logout</a>
+
+        <!-- Welcome Message and Username -->
+        <h2>Welcome, {{ name }}</h2>
+        <p>Username: {{ username }}</p>
+    </div>
+
+    <!-- Hamburger Menu -->
+    <div class="menu" id="menu">
+        <span class="close-btn" onclick="toggleMenu()">&times;</span>
+        <a href="#" onclick="openEditProfileModal()">Edit Profile</a>
+        <a href="#" onclick="openChangePasswordModal()">Change Password</a>
+        <a href="{{ url_for('result_history') }}">View Result History</a>
+    </div>
+
+    <!-- Main Content Section -->
+    <div class="main-content">
+        <!-- Take Quiz Button -->
+        <button onclick="openTakeQuizModal()" class="take-quiz-button">Take Quiz</button>
+
+        <!-- Instruction Section -->
+        <div class="instruction-section">
+            <h3>Instructions</h3>
+            <ol>
+                <li>Click the "Take Quiz" button to start the Quiz.</li>
+                <li>Read each question carefully before answering.</li>
+                <li>You will have unlimited time to complete the quiz.</li>
+                <li>Upon successful completion, you will receive a certificate.</li>
+            </ol>
+        </div>
+
+        <!-- Certificate Information -->
+        <div class="certificate-info">
+            <p><strong>Certificate Information:</strong></p>
+            <p>Earn a certificate upon passing the quiz. Certificates will be available for download in your profile section.</p>
+            <p>We are constantly adding new quizzes, so check back often! Good Luck!</p>
+        </div>
+    </div>
+
+    <!-- Edit Profile Modal -->
+    <div id="editProfileModal" class="modal">
+        <h3>Edit Profile</h3>
+        <form id="editProfileForm">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" pattern="[A-Za-z\s]+" 
+            title="Only letters and spaces are allowed." 
+            minlength="3" value="{{ name }}" required>
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" value="{{ username }}" required>
+            <button type="submit">Save Changes</button>
+            <button type="button" onclick="closeEditProfileModal()">Cancel</button>
+        </form>
+    </div>
+
+    <!-- Change Password Modal -->
+    <div id="changePasswordModal" class="modal">
+        <h3>Change Password</h3>
+        <form id="changePasswordForm">
+            <label for="old_password">Old Password:</label>
+            <input type="password" id="old_password" name="old_password" required>
+            <label for="new_password">New Password:</label>
+            <input type="password" id="new_password" pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{4,}$" 
+            title="Password must contain at least one number, one lowercase letter, one uppercase letter, 
+            and be at least 4 characters long." name="new_password" required>
+            <label for="confirm_password">Confirm New Password:</label>
+            <input type="password" id="confirm_password" name="confirm_password" required>
+            <button type="submit">Change Password</button>
+            <button type="button" onclick="closeChangePasswordModal()">Cancel</button>
+        </form>
+    </div>
+
+    <!-- Take Quiz Modal -->
+    <div id="takeQuizModal" class="modal">
+        <h3>Take Quiz</h3>
+        <form id="takeQuizForm" action="{{ url_for('take_quiz') }}" method="POST">
+            <label for="question_type">Quiz Type:</label>
+            <select id="question_type" name="question_type" required>
+                <option value="General Knowledge">General Knowledge</option>
+                <option value="Science">Science</option>
+                <option value="History">History</option>
+                <option value="Math">Math</option>
+            </select>
+
+            <label for="num_questions">Number of Questions:</label>
+            <input type="number" id="num_questions" name="num_questions" min="1" max="50" required>
+
+            <button type="submit">Start Quiz</button>
+            <button type="button" onclick="closeTakeQuizModal()">Cancel</button>
+        </form>
+    </div>
+
+    <!-- Overlay for Modal -->
+    <div id="overlay" class="overlay"></div>
+
+    <!-- Date and Time Display -->
+    <div id="dateTime"></div>
+
+    <script>
+        function updateDateTime() {
+            const now = new Date();
+            const dateTimeString = now.toLocaleString();
+            document.getElementById("dateTime").textContent = dateTimeString;
+        }
+
+        updateDateTime();
+        setInterval(updateDateTime, 1000);
+
+        function openEditProfileModal() {
+            document.getElementById("editProfileModal").style.display = "block";
+            document.getElementById("overlay").style.display = "block";
+        }
+
+        function closeEditProfileModal() {
+            document.getElementById("editProfileModal").style.display = "none";
+            document.getElementById("overlay").style.display = "none";
+        }
+
+        function openChangePasswordModal() {
+            document.getElementById("changePasswordModal").style.display = "block";
+            document.getElementById("overlay").style.display = "block";
+        }
+
+        function closeChangePasswordModal() {
+            document.getElementById("changePasswordModal").style.display = "none";
+            document.getElementById("overlay").style.display = "none";
+        }
+
+        function openTakeQuizModal() {
+            document.getElementById("takeQuizModal").style.display = "block";
+            document.getElementById("overlay").style.display = "block";
+        }
+
+        function closeTakeQuizModal() {
+            document.getElementById("takeQuizModal").style.display = "none";
+            document.getElementById("overlay").style.display = "none";
+        }
+
+        // Handle Edit Profile Form Submission
+        document.getElementById("editProfileForm").addEventListener("submit", function (event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+
+            fetch("/user/edit_profile", {
+                method: "POST",
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert("Profile updated successfully!");
+                    window.location.reload();
+                } else {
+                    alert(data.message || "Failed to update profile.");
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("An error occurred while updating the profile.");
+            });
+        });
+
+        // Handle Change Password Form Submission
+        document.getElementById("changePasswordForm").addEventListener("submit", function (event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+
+            fetch("/user/change_password", {
+                method: "POST",
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert("Password changed successfully!");
+                    window.location.reload();
+                } else {
+                    alert(data.message || "Failed to change password.");
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("An error occurred while changing the password.");
+            });
+        });
+
+        // Hamburger Menu Toggle Function
+        function toggleMenu() {
+            const menu = document.getElementById("menu");
+            menu.classList.toggle("active");
+        }
+    </script>
+</body>
+</html>
