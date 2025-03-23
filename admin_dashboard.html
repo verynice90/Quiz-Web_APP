@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <!-- Include DataTables CSS -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
+    <style>
+       
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ccc;
+            text-align: left;
+        }
+        th {
+            background-color: #007bff;
+            color: #fff;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .actions {
+            display: flex;
+            gap: 10px;
+        }
+        .button {
+            padding: 5px 10px;
+            text-decoration: none;
+            color: #fff;
+            border-radius: 4px;
+        }
+        .button.modify {
+            background-color: #28a745;
+        }
+        .button.delete {
+            background-color: #dc3545;
+        }
+        .button.add {
+            background-color: #007bff;
+            margin-bottom: 20px;
+            display: inline-block;
+            padding: 10px 20px;
+        }
+        .button.change-password {
+            background-color: #ffc107;
+            margin-bottom: 20px;
+            display: inline-block;
+            padding: 10px 20px;
+        }
+        .button.edit-profile {
+            background-color: #17a2b8;
+            margin-bottom: 20px;
+            display: inline-block;
+            padding: 10px 20px;
+        }
+        .message {
+            text-align: center;
+            margin-top: 10px;
+            color: red;
+        }
+        .logout {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: #6c757d;
+            padding: 10px 20px;
+            text-decoration: none;
+            color: #fff;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        .logout:hover {
+            background-color: #5a6268;
+        }
+        #dateTime {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: rgba(255, 255, 255, 0.7);
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-family: sans-serif;
+        }
+        /* Modal Styling */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+        .modal-content {
+            background-color: #fff;
+            margin: 10% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 30%;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close:hover,
+        .close:focus {
+            color: #000;
+            text-decoration: none;
+        }
+        /* Form Styling */
+        .modal-content h2 {
+            margin-top: 0;
+            color: #333;
+            text-align: center;
+        }
+        .modal-content form {
+            display: flex;
+            flex-direction: column;
+        }
+        .modal-content label {
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        .modal-content input {
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .modal-content input:focus {
+            border-color: #007bff;
+            outline: none;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+        }
+        .modal-content button {
+            padding: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .modal-content button:hover {
+            background-color: #0056b3;
+        }
+    
+
+        /* Add styles for collapsible sections */
+        .collapsible {
+            cursor: pointer;
+            padding: 10px;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .collapsible:hover {
+            background-color: #e9e9e9;
+        }
+
+        .collapsible::after {
+            content: "▼";
+            font-size: 12px;
+            transition: transform 0.2s ease;
+        }
+
+        .collapsible.active::after {
+            transform: rotate(180deg);
+        }
+
+        .content {
+            display: none;
+            overflow: hidden;
+            transition: max-height 0.2s ease-out;
+        }
+           /* Hamburger Menu Styles */
+           .menu-icon {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 24px;
+            cursor: pointer;
+            z-index: 1000;
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px;
+            border-radius: 4px;
+        }
+
+        .menu-icon:hover {
+            background-color: #0056b3;
+        }
+
+        .menu {
+            display: none;
+            position:absolute;
+            top: 60px;
+            left: 20px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .menu a {
+            display: block;
+            padding: 10px 20px;
+            text-decoration: none;
+            color: #333;
+        }
+
+        .menu a:hover {
+            background-color: #f4f4f4;
+        }
+    </style>
+
+</head>
+<body>
+     <!-- Hamburger Menu Icon -->
+     <div class="menu-icon" onclick="toggleMenu()">&#9776;</div>
+
+     <!-- Hamburger Menu -->
+     <div class="menu" id="menu">
+         <a href="#" onclick="openEditProfileModal()">Edit Profile</a>
+         <a href="#" onclick="openChangePasswordModal()">Change Password</a>
+     </div>
+ 
+    <p>
+        <p><span id="dateTime"></span></p>
+        <script>
+            function updateDateTime() {
+                const now = new Date();
+                const dateTimeString = now.toLocaleString();
+                document.getElementById("dateTime").textContent = dateTimeString;
+            }
+            updateDateTime();
+            setInterval(updateDateTime, 1000);
+        </script>
+    </p>
+
+    <h1>Admin Dashboard</h1>
+   <!--  <a href="#" class="button edit-profile" onclick="openEditProfileModal()">Edit Profile</a>
+    <a href="{{ url_for('add_question') }}" class="button add">Add Question</a><br>
+    <a href="#" class="button change-password" onclick="openChangePasswordModal()">Change Password</a>
+    -->
+    <a href="{{ url_for('logout') }}" class="button logout">Logout</a>
+<a href="{{ url_for('add_question') }}" class="button add">Add Question</a><br>
+    <!-- Admin Profile -->
+    <h2>Admin Profile</h2>
+    <p><strong>Name:</strong> {{ admin_name }}</p>
+    <p><strong>Username:</strong> {{ username }}</p>
+
+    <!-- Collapsible Section for Your Questions -->
+    <div class="collapsible" onclick="toggleSection('yourQuestions')">
+        <h2>Your Questions</h2>
+    </div>
+    <div id="yourQuestions" class="content">
+        <table id="questionsTable" class="display">
+            <thead>
+                <tr>
+                    <th>Number</th>
+                    <th>Question Type</th>
+                    <th>Question Text</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for question in questions %}
+                    <tr>
+                        <td class="random-id"></td> <!-- Random ID will be inserted here -->
+                        <td>{{ question[1] }}</td>
+                        <td>{{ question[2] }}</td>
+                        <td class="actions">
+                            <a href="{{ url_for('modify_question', question_id=question[0]) }}" class="button modify">Modify</a>
+                            <a href="{{ url_for('delete_question', question_id=question[0]) }}" class="button delete" onclick="return confirm('Are you sure you want to delete this question?')">Delete</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Collapsible Section for All Questions -->
+    <div class="collapsible" onclick="toggleSection('allQuestions')">
+        <h2>All Questions</h2>
+    </div>
+    <div id="allQuestions" class="content">
+        <table id="allQuestionsTable" class="display">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Question Type</th>
+                    <th>Question Text</th>
+                    <th>Correct Answer</th>
+                    <th>Added By</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for question in all_questions %}
+                    <tr>
+                        <td class="random-id"></td> <!-- Random ID will be inserted here -->
+                        <td>{{ question[1] }}</td> <!-- Question Type -->
+                        <td>{{ question[2] }}</td> <!-- Question Text -->
+                        <td>
+                            {% if question[7] == 1 %}
+                                {{ question[3] }} <!-- Option 1 -->
+                            {% elif question[7] == 2 %}
+                                {{ question[4] }} <!-- Option 2 -->
+                            {% elif question[7] == 3 %}
+                                {{ question[5] }} <!-- Option 3 -->
+                            {% elif question[7] == 4 %}
+                                {{ question[6] }} <!-- Option 4 -->
+                            {% else %}
+                                N/A <!-- Fallback in case of invalid correct_option value -->
+                            {% endif %}
+                        </td>
+                        <td>{{ question[8] }}</td> <!-- Added By (Admin Name) -->
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Collapsible Section for Users -->
+    <div class="collapsible" onclick="toggleSection('users')">
+        <h2>Users</h2>
+    </div>
+    <div id="users" class="content">
+        <table id="usersTable" class="display">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Age</th>
+                    <th>Username</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                    <tr>
+                        <td class="random-id"></td> <!-- Random ID will be inserted here -->
+                        <td>{{ user[0] }}</td>
+                        <td>{{ user[1] }}</td>
+                        <td>{{ user[2] }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="message">
+                {% for message in messages %}
+                    {{ message }}
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <!-- Edit Profile Modal -->
+    <div id="editProfileModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeEditProfileModal()">&times;</span>
+            <h2>Edit Profile</h2>
+            <form id="editProfileForm" onsubmit="return submitEditProfileForm(event)">
+                <label for="admin_name">Name:</label>
+                <input type="text" id="admin_name" name="admin_name" value="{{ admin_name }}" required><br><br>
+                <label for="username">Username:</label>
+                <input type="text" id="username" pattern="[A-Za-z\s]+" 
+                title="Only letters and spaces are allowed." 
+                minlength="3" name="username" value="{{ username }}" required><br><br>
+                <button type="submit">Save Changes</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Change Password Modal -->
+    <div id="changePasswordModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeChangePasswordModal()">&times;</span>
+            <h2>Change Password</h2>
+            <form id="changePasswordForm" onsubmit="return submitChangePasswordForm(event)">
+                <label for="old_password">Old Password:</label>
+                <input type="password" id="old_password" name="old_password" required><br><br>
+                <label for="new_password">New Password:</label>
+                <input type="password" id="new_password" name="new_password" required><br><br>
+                <label for="confirm_password">Confirm New Password:</label>
+                <input type="password" id="confirm_password" name="confirm_password" required><br><br>
+                <button type="submit">Change Password</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Include jQuery and DataTables JS -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script>
+        // Function to generate random IDs starting from 1
+        function generateRandomIds() {
+            const tables = document.querySelectorAll('table');
+            tables.forEach(table => {
+                const rows = table.querySelectorAll('tbody tr');
+                let id = 1;
+                rows.forEach(row => {
+                    const idCell = row.querySelector('.random-id');
+                    if (idCell) {
+                        idCell.textContent = id++;
+                    }
+                });
+            });
+        }
+
+        // Initialize DataTables and generate random IDs
+        $(document).ready(function() {
+            $('#questionsTable').DataTable();
+            $('#allQuestionsTable').DataTable();
+            $('#usersTable').DataTable();
+            generateRandomIds(); // Generate random IDs after tables are initialized
+        });
+
+        // Toggle collapsible sections
+        function toggleSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            const collapsible = section.previousElementSibling;
+            if (section.style.display === "block") {
+                section.style.display = "none";
+                collapsible.classList.remove("active");
+            } else {
+                section.style.display = "block";
+                collapsible.classList.add("active");
+            }
+        }
+
+        // Modal functions
+        function openEditProfileModal() {
+            document.getElementById('editProfileModal').style.display = 'block';
+        }
+
+        function closeEditProfileModal() {
+            document.getElementById('editProfileModal').style.display = 'none';
+        }
+
+        function openChangePasswordModal() {
+            document.getElementById('changePasswordModal').style.display = 'block';
+        }
+
+        function closeChangePasswordModal() {
+            document.getElementById('changePasswordModal').style.display = 'none';
+        }
+
+        // Edit Profile Form Submission
+        function submitEditProfileForm(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            fetch('/admin/edit_profile', {
+                method: 'POST',
+                body: formData
+            }).then(response => response.json())
+              .then(data => {
+                  if (data.success) {
+                      alert('Profile updated successfully!');
+                      window.location.reload();
+                  } else {
+                      alert(data.message || 'Failed to update profile.');
+                  }
+              });
+            return false;
+        }
+
+        // Change Password Form Submission
+        function submitChangePasswordForm(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            fetch('/admin/change_password', {
+                method: 'POST',
+                body: formData
+            }).then(response => response.json())
+              .then(data => {
+                  if (data.success) {
+                      alert('Password changed successfully!');
+                      window.location.reload();
+                  } else {
+                      alert(data.message || 'Failed to change password.');
+                  }
+              });
+            return false;
+        }
+         // Function to toggle the hamburger menu
+         function toggleMenu() {
+            const menu = document.getElementById('menu');
+            if (menu.style.display === "block") {
+                menu.style.display = "none";
+            } else {
+                menu.style.display = "block";
+            }
+        }
+
+        // Close the menu when clicking outside of it
+        window.onclick = function(event) {
+            const menu = document.getElementById('menu');
+            const menuIcon = document.querySelector('.menu-icon');
+            if (event.target !== menu && event.target !== menuIcon) {
+                menu.style.display = "none";
+            }
+        };
+
+    </script>
+</body>
+</html>

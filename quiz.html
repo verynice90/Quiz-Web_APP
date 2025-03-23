@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        .quiz-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .quiz-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .question {
+            margin-bottom: 20px;
+        }
+        .question p {
+            font-weight: bold;
+        }
+        .question label {
+            display: block;
+            margin: 5px 0;
+        }
+        .submit-button {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .submit-button button {
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .submit-button button:hover {
+            background-color: #218838;
+        }
+        .cancel-button {
+            position: fixed;
+            width: 150px; /* Match the width of the quiz form */
+            padding: 10px;
+            background-color: #d6858d;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none; /* Remove underline from link */
+            display: block; /* Make it a block element to take full width */
+            margin-top: 1.5px;
+        }
+        .cancel-button:hover {
+            background-color: #c82333;
+        }
+        #dateTime {
+            position: fixed;
+            bottom: 20px; /* Adjust as needed */
+            right: 20px; /* Adjust as needed */
+            background-color: rgba(255, 255, 255, 0.7); /* Optional: semi-transparent white background */
+            padding: 5px 10px; /* Optional: padding around the time */
+            border-radius: 5px; /* Optional: rounded corners */
+            font-family: sans-serif; /* Optional: choose a font */
+        }
+    </style>
+</head>
+<body>
+    <a href="{{ url_for('user_dashboard') }}" class="cancel-button">CANCEL QUIZ</a>
+
+    <p>
+        <p><span id="dateTime"></span></p>
+        
+        <script>
+         function updateDateTime() {
+          const now = new Date();
+          const dateTimeString = now.toLocaleString(); 
+          document.getElementById("dateTime").textContent = dateTimeString;
+        }
+        
+        updateDateTime();
+        
+        setInterval(updateDateTime, 1000); </script>
+        </p>
+    <div class="quiz-container">
+        <h2>Quiz Questions</h2>
+        <form action="{{ url_for('submit_quiz') }}" method="POST" onsubmit="return validateQuiz()">
+            <input type="hidden" name="question_type" value="{{ questions[0][1] }}">
+            {% for question in questions %}
+                <div class="question">
+                    <p>{{ loop.index }}. {{ question[2] }}</p> <!-- Use loop.index for numbering -->
+                    <label>
+                        <input type="radio" name="question_{{ question[0] }}" value="1"> {{ question[3] }}
+                    </label>
+                    <label>
+                        <input type="radio" name="question_{{ question[0] }}" value="2"> {{ question[4] }}
+                    </label>
+                    <label>
+                        <input type="radio" name="question_{{ question[0] }}" value="3"> {{ question[5] }}
+                    </label>
+                    <label>
+                        <input type="radio" name="question_{{ question[0] }}" value="4"> {{ question[6] }}
+                    </label>
+                </div>
+            {% endfor %}
+            <div class="submit-button">
+                <button type="submit">Submit Quiz</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        function validateQuiz() {
+            const questions = document.querySelectorAll('.question');
+            let unansweredQuestions = [];
+
+            questions.forEach((question, index) => {
+                const radioButtons = question.querySelectorAll('input[type="radio"]');
+                let isAnswered = false;
+
+                radioButtons.forEach(radio => {
+                    if (radio.checked) {
+                        isAnswered = true;
+                    }
+                });
+
+                if (!isAnswered) {
+                    unansweredQuestions.push(index + 1); // Add the question number to the list
+                }
+            });
+
+            if (unansweredQuestions.length > 0) {
+                // Display a single alert for all unanswered questions
+                alert(`Please answer the following questions before submitting:\n${unansweredQuestions.join(', ')}`);
+                return false; // Prevent form submission
+            }
+
+            return true; // Allow form submission
+        }
+    </script>
+</body>
+</html>

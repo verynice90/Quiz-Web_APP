@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            margin-top: 120px; /* Adjusted to account for the fixed header */
+        }
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            text-align: center;
+            background-color: #4CAF50;
+            color: white;
+            padding: 20px;
+            width: 100%;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 2.5em;
+        }
+        .header p {
+            font-size: 1.2em;
+        }
+        .main-content {
+            display: flex;
+            justify-content: space-between;
+            width: 80%;
+            margin-top: 20px;
+        }
+        .left-section, .right-section {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 48%;
+        }
+        .left-section h2, .right-section h2 {
+            color: #4CAF50;
+            margin-bottom: 20px;
+        }
+        .left-section p, .right-section p {
+            line-height: 1.6;
+        }
+        .left-section button, .right-section button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+        .left-section button:hover, .right-section button:hover {
+            background-color: #45a049;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            width: 100%;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 10px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+        .button:hover {
+            background-color: #0056b3;
+        }
+        #dateTime {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: rgba(255, 255, 255, 0.13);
+            color: black;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-family: Arial, sans-serif;
+            font-size: 0.9em;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+        .certificate-info {
+            margin-top: 20px;
+            background-color: #dff0d8;
+            padding: 10px;
+            border: 1px solid #d6e9c6;
+            border-radius: 5px;
+        }
+        .certificate-info p {
+            margin: 0;
+        }
+        .instruction-list {
+            list-style-type: disc;
+            padding-left: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Welcome to the Quiz App</h1>
+            <p>Take part in our exciting quizzes and earn a certificate upon completion. Test your knowledge and have fun!</p>
+        </div>
+        <div class="main-content">
+            <div class="left-section">
+                <h2>Student Section</h2>
+                <p>Welcome to the user section! Here, you can log in to participate in quiz. After completing a quiz, you will receive a certificate. Follow these steps to get started:</p>
+                <ol class="instruction-list">
+                    <li>Please log in to access the quiz.</li>
+                    <li>If you don't have an account, click "Create Account" to register.</li>
+                    <li>Read each question carefully before answering.</li>
+                    <li>You will have a unlimited time to complete the quiz.</li>
+                    <li>After Quiz completion, you will receive a certificate.</li>
+                </ol>
+                <div class="certificate-info">
+                    <p><strong>Certificate:</strong></p>
+                    <p>Pass the quiz and Get a certificate. Certificates will be available only after Quiz complition.</p>
+                </div>
+                <p>We are constantly adding new quizzes, so check back often! Good Luck!</p>
+                <a href="{{ url_for('user_login') }}" class="button">User Login</a>
+                <a href="{{ url_for('user_register') }}" class="button">User Register</a>
+            </div>
+            <div class="right-section">
+                <h2>Teacher Section</h2>
+                <p>Welcome to the admin section! Here, you manage quizzes. Follow these steps to get started:</p>
+                <ol>
+                    <li>Click the "Login" button to access the admin dashboard.</li>
+                    <li>If you don't have an account, click "Create Account" to register.</li>
+                    <li>Add questions, manage quizzes.</li>
+                </ol>
+                <p>Admin tools allow you to manage questions, add new questionsand modify or delete question. And update your quiz content regularly for user. and you can view user details.</p>
+                <a href="{{ url_for('admin_login') }}" class="button">Admin Login</a>
+                <a href="{{ url_for('admin_register') }}" class="button">Admin Register</a>
+            </div>
+        </div>
+        <div class="footer">
+            <p>&copy; 2025 Quiz App. All rights reserved.</p>
+        </div>
+    </div>
+    <div id="dateTime"></div>
+
+    <script>
+        function updateDateTime() {
+            const now = new Date();
+            const dateTimeString = now.toLocaleString();
+            document.getElementById("dateTime").textContent = dateTimeString;
+        }
+
+        updateDateTime();
+        setInterval(updateDateTime, 1000);
+    </script>
+</body>
+</html>

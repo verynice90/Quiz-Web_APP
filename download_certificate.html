@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Certificate</title>
+    <style>
+        body {
+            text-align: center;
+            font-family: Arial, sans-serif;
+            background-color: #f8f8f8;
+        }
+        .certificate {
+            width: 80%;
+            margin: 50px auto;
+            padding: 20px;
+            border: 10px solid gold;
+            background: white;
+            box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        h1 {
+            font-size: 40px;
+            color: #333;
+        }
+        .name {
+            font-size: 30px;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+        .details {
+            font-size: 20px;
+        }
+        .signature {
+            margin-top: 50px;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 50px;
+        }
+        .signature img {
+            width: 150px;
+            height: auto;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="certificate" id="certificate">
+        <h1>Certificate of Achievement</h1>
+        <p class="details">This is to certify that</p>
+        <u><p class="name" id="userName">{{ name }}</p></u>
+        <p class="details">has successfully completed the quiz with getting <span class="score">{{ total_questions }}</span> from <span class="score">{{ correct_answers }}</span>
+        </p>
+        <div class="signature">
+            <div>
+                <img src="signature.png" alt="Signature"><br>
+                <p>Admin Signature</p>
+            </div>
+            <p id="date">{{ date }}</p>
+        </div>
+    </div>
+    <button onclick="generatePDF()">Download as PDF</button>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script>
+        function generatePDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            html2canvas(document.getElementById("certificate")).then(canvas => {
+                const imgData = canvas.toDataURL("image/png");
+                doc.addImage(imgData, "PNG", 10, 10, 190, 0);
+                doc.save("Quiz_Certificate.pdf");
+            });
+        }
+    </script>
+</body>
+</html>

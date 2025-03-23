@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Result</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+        .result-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .result-container h2 {
+            margin-bottom: 20px;
+        }
+        .result-container p {
+            font-size: 1.2em;
+            margin: 10px 0;
+        }
+        .result-container .score {
+            font-size: 24px;
+            font-weight: bold;
+            color: #28a745;
+        }
+        .result-container a {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+        .result-container a:hover {
+            background-color: #0056b3;
+        }
+        .result-container a.download-certificate {
+            background-color: #28a745;
+        }
+        .result-container a.download-certificate:hover {
+            background-color: #218838;
+        }
+        .certificate-link {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+        .certificate-link:hover {
+            background-color: #218838;
+        }
+        #dateTime {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: rgba(255, 255, 255, 0.7);
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-family: sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <!-- Date and Time Display -->
+    <p><span id="dateTime"></span></p>
+    <script>
+        function updateDateTime() {
+            const now = new Date();
+            const dateTimeString = now.toLocaleString();
+            document.getElementById("dateTime").textContent = dateTimeString;
+        }
+        updateDateTime();
+        setInterval(updateDateTime, 1000);
+    </script>
+
+    <!-- Quiz Result Container -->
+    <div class="result-container">
+        <h2>Quiz Result</h2>
+        <p>Name: {{ name }}</p>
+        <p>Total Questions: <span class="score">{{ total_questions }}</span></p>
+        <p>Correct Answers: <span class="score">{{ correct_answers }}</span></p>
+
+        <!-- Back to Dashboard Button -->
+        <a href="{{ url_for('user_dashboard') }}">Back to Dashboard</a>
+
+        <!-- View Certificate Button -->
+        <a href="{{ url_for('certificate', result_id=result_id) }}" class="certificate-link">View Certificate</a>
+
+        <!-- Download Certificate Button (if applicable) -->
+        {% if certificate_filename %}
+        <a href="{{ url_for('download_certificate') }}" class="download-certificate">Download Certificate</a>
+        {% endif %}
+    </div>
+</body>
+</html>

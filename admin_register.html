@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Registration</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+        }
+        h1 {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input[type="text"], input[type="password"] {
+            width: 95%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+        .message {
+            text-align: center;
+            margin-top: 10px;
+            color: red;
+        }
+        .home {
+    position: fixed; /* Fixes the element to the viewport */
+    top: 10px; /* Positions it at the top */
+    left: 10px; /* Positions it at the left */
+    padding: 10px 20px; /* Adds padding around the text */
+    background-color: rgb(73, 73, 234); /* Sets the background color to blue */
+    color: white; /* Sets the text color to white */
+    text-decoration: none; /* Removes the underline from the link */
+    border-radius: 5px ; /* Optional: Rounds the bottom-right corner */
+    transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+    z-index: 1000; /* Ensures it stays on top of other elements */
+}
+
+.home:hover {
+    background-color: darkblue; /* Changes the background color on hover */
+}
+        #dateTime {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: rgba(255, 255, 255, 0.7);
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-family: sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Admin Registration</h1>
+        <form action="{{ url_for('admin_register') }}" method="POST" autocomplete="off">
+            <label for="admin_name">Admin Name:</label>
+            <input type="text" id="admin_name" name="admin_name" autocomplete="off"
+             pattern="[A-Za-z\s]+" 
+             title="Only letters and spaces are allowed." 
+             minlength="3"
+             required>
+
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" autocomplete="off" required>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" autocomplete="new-password" 
+            pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{4,}$" 
+            title="Password must contain at least one number, one lowercase letter, one uppercase letter, 
+            and be at least 4 characters long." required>
+            <label for="security_code">Security Code:</label>
+            <input type="password" id="security_code" name="security_code" autocomplete="new-password" required>
+            <input type="submit" value="Register">
+        </form>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="message">
+                    {% for message in messages %}
+                        {{ message }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+        <p>Already have an account? <a href="{{ url_for('admin_login') }}">Login here</a></p>
+    </div>
+    <a href="{{ url_for('logout') }}" class="home">Home</a>
+    <p>
+        <p><span id="dateTime"></span></p>
+        
+        <script>
+         function updateDateTime() {
+          const now = new Date();
+          const dateTimeString = now.toLocaleString(); 
+          document.getElementById("dateTime").textContent = dateTimeString;
+        }
+        
+        updateDateTime();
+        
+        setInterval(updateDateTime, 1000); </script>
+        </p>
+        
+</body>
+</html>
